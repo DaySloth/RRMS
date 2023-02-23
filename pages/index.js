@@ -1,24 +1,30 @@
 import React from 'react'
 import Head from "next/head";
 import excuteQuery from "@/lib/db";
-import { Icon, Table, Button, Header, Modal, Form, Dropdown } from "semantic-ui-react";
+import { Icon, Table, Button, Header, Modal, Form, Dropdown, Grid } from "semantic-ui-react";
 import styles from "@/styles/Home.module.css";
 
 function Rows({ list }) {
-  if (list.length > 0) {
-    return <Table.Row>
-      <Table.Cell collapsing>
-        <Icon name="folder" /> node_modules
-      </Table.Cell>
-      <Table.Cell>Bigger</Table.Cell>
-      <Table.Cell collapsing textAlign="right">
-        10 hours ago
-      </Table.Cell>
-    </Table.Row>
+  if (list.length == 0) {
+    return (
+      [{ Account: "Test Account", Issue: "Test Issue" }, { Account: "Test Account 2", Issue: "Test Issue 2" }].map(element => {
+        return (
+          <Table.Row>
+            <Table.Cell collapsing>
+              <Icon name="folder" /> node_modules
+            </Table.Cell>
+            <Table.Cell>{element.Account}</Table.Cell>
+            <Table.Cell collapsing textAlign="right">
+              {element.Issue}
+            </Table.Cell>
+          </Table.Row>
+        )
+      }))
+
   } else {
     return (
       <Table.Row>
-        <Table.Cell>Nothing here</Table.Cell>
+        <Table.Cell>No sites currently in the queue</Table.Cell>
       </Table.Row>
     )
   }
@@ -55,18 +61,21 @@ function Home({ queue, issues }) {
                     icon
                     labelPosition='left'
                     primary
-                    size='small'
+                    size='tiny'
                   >
-                    <Icon name='user' /> Add User
+                    <Icon name='mail' /> Generate Email
                   </Button>
-                  <Button size='small'>Approve</Button>
-                  <Button disabled={true} size='small'>
-                    Approve All
+                  <Button disabled={true} color="red" size='tiny' icon labelPosition='right'>
+                    <Icon name='trash' />Remove All
                   </Button>
                 </Table.HeaderCell>
               </Table.Row>
             </Table.Footer>
           </Table>
+
+
+
+          {/* Adding site to service queue */}
           <Modal
             closeIcon
             open={open}
@@ -79,6 +88,9 @@ function Home({ queue, issues }) {
                 <Form.Field>
                   <label>Site Number</label>
                   <input placeholder='#12345' />
+                  <Button attached="bottom" color='blue' size="mini" onClick={() => { }} loading={false}>
+                    <Icon name='search' /> Search
+                  </Button>
                 </Form.Field>
                 <Form.Field>
                   <label>Issue</label>
