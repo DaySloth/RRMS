@@ -4,18 +4,20 @@ import excuteQuery from "@/lib/db";
 import { Icon, Table, Button, Header, Modal, Form, Dropdown, Grid } from "semantic-ui-react";
 import styles from "@/styles/Home.module.css";
 
+{/* Returns the rows for the queue table */}
 function Rows({ list }) {
   if (list.length == 0) {
     return (
       [{ Account: "Test Account", Issue: "Test Issue" }, { Account: "Test Account 2", Issue: "Test Issue 2" }].map(element => {
         return (
           <Table.Row>
-            <Table.Cell collapsing>
-              <Icon name="folder" /> node_modules
+            <Table.Cell collapsing>{"Account Number Here"}</Table.Cell>
+            <Table.Cell collapsing>{"Name Hereeeeeeeeeeeeeeeeeeeeeeeeeeee"}</Table.Cell>
+            <Table.Cell>
+              {"Issue Here"}
             </Table.Cell>
-            <Table.Cell>{element.Account}</Table.Cell>
-            <Table.Cell collapsing textAlign="right">
-              {element.Issue}
+            <Table.Cell collapsing>
+              <Button icon='trash' color="red" onClick={() => { }} />
             </Table.Cell>
           </Table.Row>
         )
@@ -44,7 +46,7 @@ function Home({ queue, issues }) {
           <Table celled striped>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell colSpan="3">Service Queue <Button size="mini" circular icon='plus' color="green" onClick={() => setOpen(true)} /></Table.HeaderCell>
+                <Table.HeaderCell colSpan="4">Service Queue <Button size="mini" circular icon='plus' color="green" onClick={() => setOpen(true)} /></Table.HeaderCell>
               </Table.Row>
             </Table.Header>
 
