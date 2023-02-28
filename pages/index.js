@@ -1,41 +1,106 @@
-import React from 'react'
+import React from "react";
 import Head from "next/head";
 import excuteQuery from "@/lib/db";
-import { Icon, Table, Button, Header, Modal, Form, Dropdown, Grid } from "semantic-ui-react";
+import {
+  Icon,
+  Table,
+  Button,
+  Header,
+  Modal,
+  Form,
+  Dropdown,
+  Grid,
+  Message,
+} from "semantic-ui-react";
 import styles from "@/styles/Home.module.css";
 
-{/* Returns the rows for the queue table */}
-function Rows({ list }) {
-  if (list.length == 0) {
-    return (
-      [{ Account: "Test Account", Issue: "Test Issue" }, { Account: "Test Account 2", Issue: "Test Issue 2" }].map(element => {
-        return (
-          <Table.Row>
-            <Table.Cell collapsing>{"Account Number Here"}</Table.Cell>
-            <Table.Cell collapsing>{"Name Hereeeeeeeeeeeeeeeeeeeeeeeeeeee"}</Table.Cell>
-            <Table.Cell>
-              {"Issue Here"}
-            </Table.Cell>
-            <Table.Cell collapsing>
-              <Button icon='trash' color="red" onClick={() => { }} />
-            </Table.Cell>
-          </Table.Row>
-        )
-      }))
+async function searchAccounts(accountNumber) {
+  const result = await (await fetch(`/api/stores/search/${accountNumber}`))
+    .json()
+    .then((data) => data);
+  return result;
+}
 
+{
+  /* Returns the rows for the queue table */
+}
+function QueueRows({ list }) {
+  if (list.length > 0) {
+    return [
+      { Account: "Test Account", Issue: "Test Issue" },
+      { Account: "Test Account 2", Issue: "Test Issue 2" },
+    ].map((element) => {
+      return (
+        <Table.Row>
+          <Table.Cell collapsing>{"Account Number Here"}</Table.Cell>
+          <Table.Cell collapsing>
+            {"Name Hereeeeeeeeeeeeeeeeeeeeeeeeeeee"}
+          </Table.Cell>
+          <Table.Cell>{"Issue Here"}</Table.Cell>
+          <Table.Cell collapsing>
+            <Button icon="trash" color="red" onClick={() => {}} />
+          </Table.Cell>
+        </Table.Row>
+      );
+    });
   } else {
     return (
       <Table.Row>
         <Table.Cell>No sites currently in the queue</Table.Cell>
       </Table.Row>
-    )
+    );
   }
-
 }
 
+{
+  /* Returns the rows for the account search table */
+}
+function SearchTable({ list }) {
+  if (list.stores) {
+    if (list.stores.length > 0) {
+      return (
+        <Table celled striped>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Account Number</Table.HeaderCell>
+              <Table.HeaderCell>Name</Table.HeaderCell>
+              <Table.HeaderCell>Add?</Table.HeaderCell>
+            </Table.Row>
+            {list.stores.map((element) => {
+              return (
+                <Table.Row>
+                  <Table.Cell collapsing>{element.Account}</Table.Cell>
+                  <Table.Cell collapsing>{element["Account Name"]}</Table.Cell>
+                  <Table.Cell collapsing>
+                    <Button
+                      size="mini"
+                      icon="plus"
+                      color="blue"
+                      onClick={() => {}}
+                    />
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Header>
+        </Table>
+      );
+    } else {
+      return (
+        <Message color="red" size="mini">
+          <Message.Header>No sites found</Message.Header>
+        </Message>
+      );
+    }
+  } else {
+    return <></>;
+  }
+}
 
 function Home({ queue, issues }) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
+  const [sites, setSites] = React.useState([]);
+
   return (
     <>
       <Head>
@@ -46,36 +111,48 @@ function Home({ queue, issues }) {
           <Table celled striped>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell colSpan="4">Service Queue <Button size="mini" circular icon='plus' color="green" onClick={() => setOpen(true)} /></Table.HeaderCell>
+                <Table.HeaderCell colSpan="4">
+                  Service Queue{" "}
+                  <Button
+                    size="mini"
+                    circular
+                    icon="plus"
+                    color="green"
+                    onClick={() => setOpen(true)}
+                  />
+                </Table.HeaderCell>
               </Table.Row>
             </Table.Header>
 
             <Table.Body>
-              <Rows
-                list={queue}
-              />
+              <QueueRows list={queue} />
             </Table.Body>
             <Table.Footer fullWidth>
               <Table.Row>
-                <Table.HeaderCell colSpan='4'>
+                <Table.HeaderCell colSpan="4">
                   <Button
-                    floated='right'
+                    floated="right"
                     icon
-                    labelPosition='left'
+                    labelPosition="left"
                     primary
-                    size='tiny'
+                    size="tiny"
                   >
-                    <Icon name='mail' /> Generate Email
+                    <Icon name="mail" /> Generate Email
                   </Button>
-                  <Button disabled={true} color="red" size='tiny' icon labelPosition='right'>
-                    <Icon name='trash' />Remove All
+                  <Button
+                    disabled={true}
+                    color="red"
+                    size="tiny"
+                    icon
+                    labelPosition="right"
+                  >
+                    <Icon name="trash" />
+                    Remove All
                   </Button>
                 </Table.HeaderCell>
               </Table.Row>
             </Table.Footer>
           </Table>
-
-
 
           {/* Adding site to service queue */}
           <Modal
@@ -84,34 +161,41 @@ function Home({ queue, issues }) {
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
           >
-            <Header icon='archive' content='Add site to queue' />
+            <Header icon="archive" content="Add site to queue" />
             <Modal.Content>
               <Form>
                 <Form.Field>
                   <label>Site Number</label>
-                  <input placeholder='#12345' />
-                  <Button attached="bottom" color='blue' size="mini" onClick={() => { }} loading={false}>
-                    <Icon name='search' /> Search
+                  <input placeholder="#12345" />
+                  <Button
+                    attached="bottom"
+                    color="blue"
+                    size="mini"
+                    onClick={async () => {
+                      const accounts = await searchAccounts("1790");
+
+                      setSites(accounts);
+                    }}
+                    loading={false}
+                  >
+                    <Icon name="search" /> Search
                   </Button>
                 </Form.Field>
+
+                <SearchTable list={sites} />
+
                 <Form.Field>
                   <label>Issue</label>
-                  <Dropdown
-                    fluid
-                    search
-                    selection
-                    options={issues}
-                  />
+                  <Dropdown fluid search selection options={issues} />
                 </Form.Field>
-
               </Form>
             </Modal.Content>
             <Modal.Actions>
-              <Button color='red' onClick={() => setOpen(false)}>
-                <Icon name='remove' /> Cancel
+              <Button color="red" onClick={() => setOpen(false)}>
+                <Icon name="remove" /> Cancel
               </Button>
-              <Button color='green' onClick={() => setOpen(false)}>
-                <Icon name='checkmark' /> Add to Queue
+              <Button color="green" onClick={() => setOpen(false)}>
+                <Icon name="checkmark" /> Add to Queue
               </Button>
             </Modal.Actions>
           </Modal>
