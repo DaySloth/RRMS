@@ -100,6 +100,7 @@ function SearchTable({ list }) {
 function Home({ queue, issues }) {
   const [open, setOpen] = React.useState(false);
   const [sites, setSites] = React.useState([]);
+  const [modalSite, setModalSite] = React.useState("");
 
   return (
     <>
@@ -118,7 +119,10 @@ function Home({ queue, issues }) {
                     circular
                     icon="plus"
                     color="green"
-                    onClick={() => setOpen(true)}
+                    onClick={() => {
+                      setSites([]);
+                      setOpen(true);
+                    }}
                   />
                 </Table.HeaderCell>
               </Table.Row>
@@ -158,7 +162,10 @@ function Home({ queue, issues }) {
           <Modal
             closeIcon
             open={open}
-            onClose={() => setOpen(false)}
+            onClose={() => {
+              setSites([]);
+              setOpen(false);
+            }}
             onOpen={() => setOpen(true)}
           >
             <Header icon="archive" content="Add site to queue" />
@@ -166,13 +173,18 @@ function Home({ queue, issues }) {
               <Form>
                 <Form.Field>
                   <label>Site Number</label>
-                  <input placeholder="#12345" />
+                  <input
+                    placeholder="#12345"
+                    onChange={(e, data) => {
+                      setModalSite(e.target.value);
+                    }}
+                  />
                   <Button
                     attached="bottom"
                     color="blue"
                     size="mini"
                     onClick={async () => {
-                      const accounts = await searchAccounts("1790");
+                      const accounts = await searchAccounts(modalSite);
 
                       setSites(accounts);
                     }}
