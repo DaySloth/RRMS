@@ -64,14 +64,14 @@ function SearchTable({ list }) {
             <Table.Row>
               <Table.HeaderCell>Account Number</Table.HeaderCell>
               <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Add?</Table.HeaderCell>
+              <Table.HeaderCell textAlign="center">Add?</Table.HeaderCell>
             </Table.Row>
             {list.stores.map((element) => {
               return (
                 <Table.Row>
                   <Table.Cell collapsing>{element.Account}</Table.Cell>
                   <Table.Cell collapsing>{element["Account Name"]}</Table.Cell>
-                  <Table.Cell collapsing>
+                  <Table.Cell collapsing textAlign="center">
                     <Button
                       size="mini"
                       icon="plus"
